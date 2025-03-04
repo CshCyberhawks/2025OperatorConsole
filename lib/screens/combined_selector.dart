@@ -1,0 +1,358 @@
+import 'package:flutter/material.dart';
+import '../widgets/hexagon_painter.dart';
+import '../widgets/branch_painter.dart';
+import 'dart:math' as math;
+
+class CombinedSelector extends StatefulWidget {
+  const CombinedSelector({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<CombinedSelector> createState() => _CombinedSelectorState();
+}
+
+class _CombinedSelectorState extends State<CombinedSelector> {
+  // Selected face (A-F), starting with A
+  String _selectedFace = 'A';
+  // Selected level (L1-L4, Algae Low, Algae High), starting with L1
+  String _selectedLevel = 'L1';
+  // Selected side (Left or Right), starting with Left
+  String _selectedSide = 'Left';
+
+  void _selectFace(String face) {
+    setState(() {
+      _selectedFace = face;
+    });
+  }
+
+  void _selectLevel(String level) {
+    setState(() {
+      _selectedLevel = level;
+    });
+  }
+
+  void _selectSide(String side) {
+    setState(() {
+      _selectedSide = side;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Calculate button positions based on hexagon geometry
+    final double hexRadius = 125; // Half the size of the hexagon (250/2)
+    final double buttonDistance =
+        hexRadius * 0.8; // Distance from center to button
+
+    // Calculate positions for each face button
+    // For a regular hexagon with flat sides at top and bottom
+    final Map<String, Offset> buttonPositions = {
+      // Calculate the center point of each face
+      'A': Offset(0, buttonDistance), // Bottom (0 degrees)
+      'B': Offset(
+        buttonDistance * 0.866,
+        buttonDistance * 0.5,
+      ), // Bottom-right (30 degrees)
+      'C': Offset(
+        buttonDistance * 0.866,
+        -buttonDistance * 0.5,
+      ), // Top-right (150 degrees)
+      'D': Offset(0, -buttonDistance), // Top (180 degrees)
+      'E': Offset(
+        -buttonDistance * 0.866,
+        -buttonDistance * 0.5,
+      ), // Top-left (210 degrees)
+      'F': Offset(
+        -buttonDistance * 0.866,
+        buttonDistance * 0.5,
+      ), // Bottom-left (330 degrees)
+    };
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(widget.title),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Combined selection display
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    'Position: $_selectedFace',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Level: $_selectedLevel',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          _selectedLevel.contains('Algae')
+                              ? Colors.green
+                              : Colors.black,
+                    ),
+                  ),
+                  Text(
+                    'Side: $_selectedSide',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Main selectors container
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Position selector (hexagon)
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Position',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: 300,
+                          height: 300,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Hexagon shape
+                              CustomPaint(
+                                size: const Size(250, 250),
+                                painter: HexagonPainter(
+                                  selectedFace: _selectedFace,
+                                ),
+                              ),
+
+                              // Generate face buttons at calculated positions
+                              ...buttonPositions.entries.map((entry) {
+                                final String face = entry.key;
+                                final Offset position = entry.value;
+
+                                return Positioned(
+                                  left:
+                                      150 +
+                                      position.dx -
+                                      28, // Center of stack (300/2) + offset - half button width
+                                  top:
+                                      150 +
+                                      position.dy -
+                                      28, // Center of stack (300/2) + offset - half button height
+                                  child: _buildFaceButton(face),
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Level and Side selectors
+                  Expanded(
+                    child: Column(
+                      children: [
+                        // Level selector
+                        const Text(
+                          'Level',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: 300,
+                          height: 350,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Branch visualization
+                              CustomPaint(
+                                size: const Size(250, 350),
+                                painter: BranchPainter(
+                                  selectedLevel:
+                                      _selectedLevel.startsWith('L')
+                                          ? _selectedLevel
+                                          : 'L1', // Default to L1 for branch painter if algae is selected
+                                  isAlgaeSelected: _selectedLevel.contains(
+                                    'Algae',
+                                  ),
+                                ),
+                              ),
+
+                              // Level buttons
+                              // L1 (bottom shelf)
+                              Positioned(
+                                bottom: 10,
+                                right: 40,
+                                child: _buildLevelButton('L1'),
+                              ),
+
+                              // L2 (bottom branch)
+                              Positioned(
+                                bottom: 80,
+                                right: 40,
+                                child: _buildLevelButton('L2'),
+                              ),
+
+                              // Algae Low (between L2 and L3)
+                              Positioned(
+                                bottom: 145,
+                                right: 10,
+                                child: _buildAlgaeButton('Algae Low'),
+                              ),
+
+                              // L3 (middle branch)
+                              Positioned(
+                                top: 120,
+                                right: 40,
+                                child: _buildLevelButton('L3'),
+                              ),
+
+                              // Algae High (between L3 and L4)
+                              Positioned(
+                                top: 75,
+                                right: 10,
+                                child: _buildAlgaeButton('Algae High'),
+                              ),
+
+                              // L4 (top branch)
+                              Positioned(
+                                top: 20,
+                                right: 40,
+                                child: _buildLevelButton('L4'),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Side selector (Left/Right)
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Side',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildSideButton('Left'),
+                            const SizedBox(width: 20),
+                            _buildSideButton('Right'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFaceButton(String face) {
+    bool isSelected = _selectedFace == face;
+
+    return ElevatedButton(
+      onPressed: () => _selectFace(face),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? Colors.blue : Colors.grey,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(18),
+      ),
+      child: Text(
+        face,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildLevelButton(String level) {
+    bool isSelected = _selectedLevel == level;
+
+    return ElevatedButton(
+      onPressed: () => _selectLevel(level),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? Colors.blue : Colors.grey,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(18),
+      ),
+      child: Text(
+        level,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildAlgaeButton(String algae) {
+    bool isSelected = _selectedLevel == algae;
+
+    return ElevatedButton(
+      onPressed: () => _selectLevel(algae),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? Colors.green : Colors.grey.shade600,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(12),
+      ),
+      child: Text(
+        algae.split(
+          ' ',
+        )[1][0], // Just show first letter of second word (L or H)
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildSideButton(String side) {
+    bool isSelected = _selectedSide == side;
+
+    return ElevatedButton(
+      onPressed: () => _selectSide(side),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? Colors.blue : Colors.grey,
+        foregroundColor: Colors.white,
+        minimumSize: const Size(100, 50),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+      child: Text(
+        side,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
