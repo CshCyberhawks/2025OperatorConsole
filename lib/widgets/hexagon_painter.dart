@@ -10,18 +10,18 @@ class HexagonPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint paint =
         Paint()
-          ..color = Colors.grey.shade300
+          ..color = Colors.grey.shade800
           ..style = PaintingStyle.fill;
 
     final Paint borderPaint =
         Paint()
-          ..color = Colors.black
+          ..color = Colors.grey.shade600
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.0;
 
     final Paint selectedPaint =
         Paint()
-          ..color = Colors.blue.shade200
+          ..color = Colors.blue.shade700
           ..style = PaintingStyle.fill;
 
     final double width = size.width;

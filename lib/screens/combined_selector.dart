@@ -82,8 +82,9 @@ class _CombinedSelectorState extends State<CombinedSelector> {
             Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: const Color(0xFF1E1E1E),
                 borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: Colors.grey.shade700),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -93,6 +94,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                   Text(
@@ -102,12 +104,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                       fontWeight: FontWeight.bold,
                       color:
                           _selectedAction.contains('Algae')
-                              ? Colors.green
+                              ? Colors.green.shade300
                               : _selectedAction == 'Processor'
-                              ? Colors.orange
+                              ? Colors.orange.shade300
                               : _selectedAction == 'Barge'
-                              ? Colors.purple
-                              : Colors.blue,
+                              ? Colors.purple.shade300
+                              : Colors.blue.shade300,
                     ),
                   ),
                   Text(
@@ -115,6 +117,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -381,10 +384,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     return ElevatedButton(
       onPressed: () => _selectFace(face),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.blue : Colors.grey,
+        backgroundColor:
+            isSelected ? Colors.blue.shade700 : Colors.grey.shade800,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(22),
+        elevation: isSelected ? 8 : 4,
       ),
       child: Text(
         face,
@@ -399,10 +404,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     return ElevatedButton(
       onPressed: () => _selectAction(action),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.blue : Colors.grey,
+        backgroundColor:
+            isSelected ? Colors.blue.shade700 : Colors.grey.shade800,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(22),
+        elevation: isSelected ? 8 : 4,
       ),
       child: Text(
         action,
@@ -417,10 +424,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     return ElevatedButton(
       onPressed: () => _selectAction(algae),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.green : Colors.grey.shade600,
+        backgroundColor:
+            isSelected ? Colors.green.shade700 : Colors.grey.shade800,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(18),
+        elevation: isSelected ? 8 : 4,
       ),
       child: Text(
         algae.split(
@@ -437,10 +446,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     return ElevatedButton(
       onPressed: () => _selectAction('Processor'),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.orange : Colors.grey.shade700,
+        backgroundColor:
+            isSelected ? Colors.orange.shade700 : Colors.grey.shade800,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
         padding: const EdgeInsets.all(20),
+        elevation: isSelected ? 8 : 4,
       ),
       child: const Text(
         'P',
@@ -455,10 +466,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     return ElevatedButton(
       onPressed: () => _selectAction('Barge'),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.purple : Colors.grey.shade700,
+        backgroundColor:
+            isSelected ? Colors.purple.shade700 : Colors.grey.shade800,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        elevation: isSelected ? 8 : 4,
       ),
       child: const Text(
         'B',
@@ -473,10 +486,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     return ElevatedButton(
       onPressed: () => _selectSide(side),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.blue : Colors.grey,
+        backgroundColor:
+            isSelected ? Colors.blue.shade700 : Colors.grey.shade800,
         foregroundColor: Colors.white,
         minimumSize: const Size(120, 60),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: isSelected ? 8 : 4,
       ),
       child: Text(
         side,

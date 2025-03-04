@@ -15,27 +15,27 @@ class BranchPainter extends CustomPainter {
     // Paint for the main vertical pipe
     final Paint mainPipePaint =
         Paint()
-          ..color = Colors.grey.shade400
+          ..color = Colors.grey.shade800
           ..style = PaintingStyle.fill
           ..strokeWidth = 3.0;
 
     // Paint for the horizontal pipes
     final Paint horizontalPipePaint =
         Paint()
-          ..color = Colors.grey.shade400
+          ..color = Colors.grey.shade800
           ..style = PaintingStyle.fill
           ..strokeWidth = 3.0;
 
     // Paint for the selected level
     final Paint selectedPaint =
         Paint()
-          ..color = Colors.blue.shade300
+          ..color = Colors.blue.shade700
           ..style = PaintingStyle.fill;
 
     // Paint for the border
     final Paint borderPaint =
         Paint()
-          ..color = Colors.black
+          ..color = Colors.grey.shade600
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.0;
 
