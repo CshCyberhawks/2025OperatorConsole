@@ -59,7 +59,7 @@ class BranchPainter extends CustomPainter {
 
     // Draw the horizontal pipes (branches)
     final double branchHeight = height * 0.12;
-    final double branchWidth = width * 0.35;
+    final double branchWidth = width * 0.3;
 
     // Positions for the three branches (L2, L3, L4)
     final List<double> branchPositions = [
@@ -105,7 +105,7 @@ class BranchPainter extends CustomPainter {
     final double shelfStartY = height * 0.9; // Position near bottom
 
     // Width and height of the shelf
-    final double shelfWidth = width * 0.35;
+    final double shelfWidth = width * 0.3;
     final double shelfHeight = height * 0.08;
 
     // End point (tilted downward)
