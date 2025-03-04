@@ -4,9 +4,18 @@ import '../widgets/branch_painter.dart';
 import 'dart:math' as math;
 
 class CombinedSelector extends StatefulWidget {
-  const CombinedSelector({super.key, required this.title});
+  const CombinedSelector({
+    super.key, 
+    required this.title,
+    this.onActionChanged,
+    this.onPositionChanged,
+    this.onSideChanged,
+  });
 
   final String title;
+  final Function(String)? onActionChanged;
+  final Function(String)? onPositionChanged;
+  final Function(String)? onSideChanged;
 
   @override
   State<CombinedSelector> createState() => _CombinedSelectorState();
@@ -21,21 +30,56 @@ class _CombinedSelectorState extends State<CombinedSelector> {
   String _selectedSide = 'Left';
 
   void _selectFace(String face) {
-    setState(() {
-      _selectedFace = face;
-    });
+    if (_selectedFace != face) {
+      setState(() {
+        _selectedFace = face;
+      });
+      
+      // Call the callback if provided
+      if (widget.onPositionChanged != null) {
+        widget.onPositionChanged!(face);
+      }
+      
+      // Log the change
+      _logSelectionChange('Position', face);
+    }
   }
 
   void _selectAction(String action) {
-    setState(() {
-      _selectedAction = action;
-    });
+    if (_selectedAction != action) {
+      setState(() {
+        _selectedAction = action;
+      });
+      
+      // Call the callback if provided
+      if (widget.onActionChanged != null) {
+        widget.onActionChanged!(action);
+      }
+      
+      // Log the change
+      _logSelectionChange('Action', action);
+    }
   }
 
   void _selectSide(String side) {
-    setState(() {
-      _selectedSide = side;
-    });
+    if (_selectedSide != side) {
+      setState(() {
+        _selectedSide = side;
+      });
+      
+      // Call the callback if provided
+      if (widget.onSideChanged != null) {
+        widget.onSideChanged!(side);
+      }
+      
+      // Log the change
+      _logSelectionChange('Side', side);
+    }
+  }
+  
+  // Helper method to log selection changes
+  void _logSelectionChange(String type, String value) {
+    debugPrint('$type changed to: $value');
   }
 
   @override
