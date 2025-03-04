@@ -41,7 +41,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
   @override
   Widget build(BuildContext context) {
     // Calculate button positions based on hexagon geometry
-    final double hexRadius = 125; // Half the size of the hexagon (250/2)
+    final double hexRadius = 150; // Increased from 125
     final double buttonDistance =
         hexRadius * 0.8; // Distance from center to button
 
@@ -107,7 +107,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                               ? Colors.orange
                               : _selectedAction == 'Barge'
                               ? Colors.purple
-                              : Colors.black,
+                              : Colors.blue,
                     ),
                   ),
                   Text(
@@ -121,55 +121,59 @@ class _CombinedSelectorState extends State<CombinedSelector> {
               ),
             ),
             const SizedBox(height: 20),
-            // Main selection area
+            // Main selectors row
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Position selector (hexagon)
+                  // Face selector
                   Expanded(
                     child: Column(
                       children: [
                         const Text(
                           'Position',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 24, // Increased from 20
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        SizedBox(
-                          width: 300,
-                          height: 300,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Hexagon shape
-                              CustomPaint(
-                                size: const Size(250, 250),
-                                painter: HexagonPainter(
-                                  selectedFace: _selectedFace,
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity, // Take full width
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Hexagon visualization
+                                CustomPaint(
+                                  size: Size(
+                                    hexRadius * 2,
+                                    hexRadius * 2,
+                                  ), // Increased size
+                                  painter: HexagonPainter(
+                                    selectedFace: _selectedFace,
+                                  ),
                                 ),
-                              ),
 
-                              // Generate face buttons at calculated positions
-                              ...buttonPositions.entries.map((entry) {
-                                final String face = entry.key;
-                                final Offset position = entry.value;
+                                // Generate face buttons at calculated positions
+                                ...buttonPositions.entries.map((entry) {
+                                  final String face = entry.key;
+                                  final Offset position = entry.value;
 
-                                return Positioned(
-                                  left:
-                                      150 +
-                                      position.dx -
-                                      28, // Center of stack (300/2) + offset - half button width
-                                  top:
-                                      150 +
-                                      position.dy -
-                                      28, // Center of stack (300/2) + offset - half button height
-                                  child: _buildFaceButton(face),
-                                );
-                              }),
-                            ],
+                                  return Positioned(
+                                    left:
+                                        hexRadius +
+                                        position.dx -
+                                        30, // Center + offset - half button width
+                                    top:
+                                        hexRadius +
+                                        position.dy -
+                                        30, // Center + offset - half button height
+                                    child: _buildFaceButton(face),
+                                  );
+                                }),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -184,152 +188,160 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                         const Text(
                           'Action',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 24, // Increased from 20
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        SizedBox(
-                          width: 300,
-                          height: 350,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Branch visualization
-                              CustomPaint(
-                                size: const Size(250, 350),
-                                painter: BranchPainter(
-                                  selectedLevel:
-                                      _selectedAction.startsWith('L')
-                                          ? _selectedAction
-                                          : 'L1', // Default to L1 for branch painter if algae is selected
-                                  isAlgaeSelected:
-                                      _selectedAction.contains('Algae') ||
-                                      _selectedAction == 'Processor' ||
-                                      _selectedAction == 'Barge',
-                                ),
-                              ),
-
-                              // Processor visualization (rectangle with inner rectangle)
-                              Positioned(
-                                left: 20,
-                                top: 180, // Lowered position
-                                child: Container(
-                                  width: 100,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedAction == 'Processor'
-                                            ? Colors.orange.shade200
-                                            : Colors.grey.shade400,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Container(
-                                      width: 70,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade600,
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(
-                                          color: Colors.black,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: _buildProcessorButton(),
-                                      ),
-                                    ),
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity, // Take full width
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Branch visualization
+                                CustomPaint(
+                                  size: const Size(
+                                    300,
+                                    400,
+                                  ), // Increased from 250x350
+                                  painter: BranchPainter(
+                                    selectedLevel:
+                                        _selectedAction.startsWith('L')
+                                            ? _selectedAction
+                                            : 'L1', // Default to L1 for branch painter if algae is selected
+                                    isAlgaeSelected:
+                                        _selectedAction.contains('Algae') ||
+                                        _selectedAction == 'Processor' ||
+                                        _selectedAction == 'Barge',
                                   ),
                                 ),
-                              ),
 
-                              // Barge visualization (trough with button)
-                              Positioned(
-                                left: 20,
-                                top: 50, // Upper position
-                                child: Container(
-                                  width: 100,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        _selectedAction == 'Barge'
-                                            ? Colors.purple.shade200
-                                            : Colors.grey.shade400,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 2,
+                                // Processor visualization (rectangle with inner rectangle)
+                                Positioned(
+                                  left: 10,
+                                  bottom: 30, // Position from bottom
+                                  child: Container(
+                                    width: 140,
+                                    height: 160,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          _selectedAction == 'Processor'
+                                              ? Colors.orange.shade200
+                                              : Colors.grey.shade400,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 2,
+                                      ),
                                     ),
-                                  ),
-                                  child: Center(
-                                    child: Container(
-                                      width: 80,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade600,
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20),
+                                    child: Center(
+                                      child: Container(
+                                        width: 100,
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade600,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 1,
+                                          ),
                                         ),
-                                        border: Border.all(
-                                          color: Colors.black,
-                                          width: 1,
+                                        child: Center(
+                                          child: _buildProcessorButton(),
                                         ),
                                       ),
-                                      child: Center(child: _buildBargeButton()),
                                     ),
                                   ),
                                 ),
-                              ),
 
-                              // Level buttons
-                              // L1 (bottom shelf)
-                              Positioned(
-                                bottom: 10,
-                                right: 40,
-                                child: _buildActionButton('L1'),
-                              ),
+                                // Barge visualization (trough with button)
+                                Positioned(
+                                  left: 10,
+                                  top: 30, // Upper position
+                                  child: Container(
+                                    width: 140,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          _selectedAction == 'Barge'
+                                              ? Colors.purple.shade200
+                                              : Colors.grey.shade400,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.black,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Container(
+                                        width: 120,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade600,
+                                          borderRadius: const BorderRadius.only(
+                                            bottomLeft: Radius.circular(30),
+                                            bottomRight: Radius.circular(30),
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: _buildBargeButton(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
 
-                              // L2 (bottom branch)
-                              Positioned(
-                                bottom: 80,
-                                right: 40,
-                                child: _buildActionButton('L2'),
-                              ),
+                                // Level buttons
+                                // L1 (bottom shelf)
+                                Positioned(
+                                  bottom: 130,
+                                  right: 280,
+                                  child: _buildActionButton('L1'),
+                                ),
 
-                              // Algae Low (between L2 and L3)
-                              Positioned(
-                                bottom: 135,
-                                right: 10,
-                                child: _buildAlgaeButton('Algae Low'),
-                              ),
+                                // L2 (bottom branch)
+                                Positioned(
+                                  bottom: 150,
+                                  right: 80,
+                                  child: _buildActionButton('L2'),
+                                ),
 
-                              // L3 (middle branch)
-                              Positioned(
-                                top: 120,
-                                right: 40,
-                                child: _buildActionButton('L3'),
-                              ),
+                                // Algae Low (between L2 and L3)
+                                Positioned(
+                                  bottom: 210,
+                                  right: 30,
+                                  child: _buildAlgaeButton('Algae Low'),
+                                ),
 
-                              // Algae High (between L3 and L4)
-                              Positioned(
-                                top: 70,
-                                right: 10,
-                                child: _buildAlgaeButton('Algae High'),
-                              ),
+                                // L3 (middle branch)
+                                Positioned(
+                                  top: 150,
+                                  right: 80,
+                                  child: _buildActionButton('L3'),
+                                ),
 
-                              // L4 (top branch)
-                              Positioned(
-                                top: 20,
-                                right: 40,
-                                child: _buildActionButton('L4'),
-                              ),
-                            ],
+                                // Algae High (between L3 and L4)
+                                Positioned(
+                                  top: 90,
+                                  right: 30,
+                                  child: _buildAlgaeButton('Algae High'),
+                                ),
+
+                                // L4 (top branch)
+                                Positioned(
+                                  top: 30,
+                                  right: 80,
+                                  child: _buildActionButton('L4'),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 
@@ -338,7 +350,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                         const Text(
                           'Side',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 24, // Increased from 20
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -372,11 +384,11 @@ class _CombinedSelectorState extends State<CombinedSelector> {
         backgroundColor: isSelected ? Colors.blue : Colors.grey,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(22),
       ),
       child: Text(
         face,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -390,11 +402,11 @@ class _CombinedSelectorState extends State<CombinedSelector> {
         backgroundColor: isSelected ? Colors.blue : Colors.grey,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(22),
       ),
       child: Text(
         action,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -408,13 +420,13 @@ class _CombinedSelectorState extends State<CombinedSelector> {
         backgroundColor: isSelected ? Colors.green : Colors.grey.shade600,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(18),
       ),
       child: Text(
         algae.split(
           ' ',
         )[1][0], // Just show first letter of second word (L or H)
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -428,11 +440,11 @@ class _CombinedSelectorState extends State<CombinedSelector> {
         backgroundColor: isSelected ? Colors.orange : Colors.grey.shade700,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(20),
       ),
       child: const Text(
         'P',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -445,12 +457,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.purple : Colors.grey.shade700,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       ),
       child: const Text(
         'B',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -463,12 +475,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.blue : Colors.grey,
         foregroundColor: Colors.white,
-        minimumSize: const Size(100, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        minimumSize: const Size(120, 60),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: Text(
         side,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
       ),
     );
   }
