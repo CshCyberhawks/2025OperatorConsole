@@ -15,8 +15,8 @@ class CombinedSelector extends StatefulWidget {
 class _CombinedSelectorState extends State<CombinedSelector> {
   // Selected face (A-F), starting with A
   String _selectedFace = 'A';
-  // Selected level (L1-L4, Algae Low, Algae High), starting with L1
-  String _selectedLevel = 'L1';
+  // Selected action (L1-L4, Algae Low, Algae High, Processor, Barge), starting with L1
+  String _selectedAction = 'L1';
   // Selected side (Left or Right), starting with Left
   String _selectedSide = 'Left';
 
@@ -26,9 +26,9 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     });
   }
 
-  void _selectLevel(String level) {
+  void _selectAction(String action) {
     setState(() {
-      _selectedLevel = level;
+      _selectedAction = action;
     });
   }
 
@@ -96,13 +96,17 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                     ),
                   ),
                   Text(
-                    'Level: $_selectedLevel',
+                    'Action: $_selectedAction',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color:
-                          _selectedLevel.contains('Algae')
+                          _selectedAction.contains('Algae')
                               ? Colors.green
+                              : _selectedAction == 'Processor'
+                              ? Colors.orange
+                              : _selectedAction == 'Barge'
+                              ? Colors.purple
                               : Colors.black,
                     ),
                   ),
@@ -117,8 +121,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Main selectors container
+            // Main selection area
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,13 +176,13 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                     ),
                   ),
 
-                  // Level and Side selectors
+                  // Action and Side selectors
                   Expanded(
                     child: Column(
                       children: [
-                        // Level selector
+                        // Action selector
                         const Text(
-                          'Level',
+                          'Action',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -197,11 +200,89 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                 size: const Size(250, 350),
                                 painter: BranchPainter(
                                   selectedLevel:
-                                      _selectedLevel.startsWith('L')
-                                          ? _selectedLevel
+                                      _selectedAction.startsWith('L')
+                                          ? _selectedAction
                                           : 'L1', // Default to L1 for branch painter if algae is selected
-                                  isAlgaeSelected: _selectedLevel.contains(
-                                    'Algae',
+                                  isAlgaeSelected:
+                                      _selectedAction.contains('Algae') ||
+                                      _selectedAction == 'Processor' ||
+                                      _selectedAction == 'Barge',
+                                ),
+                              ),
+
+                              // Processor visualization (rectangle with inner rectangle)
+                              Positioned(
+                                left: 20,
+                                top: 180, // Lowered position
+                                child: Container(
+                                  width: 100,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        _selectedAction == 'Processor'
+                                            ? Colors.orange.shade200
+                                            : Colors.grey.shade400,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                      width: 70,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade600,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                          color: Colors.black,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: _buildProcessorButton(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // Barge visualization (trough with button)
+                              Positioned(
+                                left: 20,
+                                top: 50, // Upper position
+                                child: Container(
+                                  width: 100,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        _selectedAction == 'Barge'
+                                            ? Colors.purple.shade200
+                                            : Colors.grey.shade400,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                      width: 80,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade600,
+                                        borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(20),
+                                          bottomRight: Radius.circular(20),
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.black,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Center(child: _buildBargeButton()),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -211,19 +292,19 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                               Positioned(
                                 bottom: 10,
                                 right: 40,
-                                child: _buildLevelButton('L1'),
+                                child: _buildActionButton('L1'),
                               ),
 
                               // L2 (bottom branch)
                               Positioned(
                                 bottom: 80,
                                 right: 40,
-                                child: _buildLevelButton('L2'),
+                                child: _buildActionButton('L2'),
                               ),
 
                               // Algae Low (between L2 and L3)
                               Positioned(
-                                bottom: 145,
+                                bottom: 135,
                                 right: 10,
                                 child: _buildAlgaeButton('Algae Low'),
                               ),
@@ -232,12 +313,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                               Positioned(
                                 top: 120,
                                 right: 40,
-                                child: _buildLevelButton('L3'),
+                                child: _buildActionButton('L3'),
                               ),
 
                               // Algae High (between L3 and L4)
                               Positioned(
-                                top: 75,
+                                top: 70,
                                 right: 10,
                                 child: _buildAlgaeButton('Algae High'),
                               ),
@@ -246,7 +327,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                               Positioned(
                                 top: 20,
                                 right: 40,
-                                child: _buildLevelButton('L4'),
+                                child: _buildActionButton('L4'),
                               ),
                             ],
                           ),
@@ -300,11 +381,11 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     );
   }
 
-  Widget _buildLevelButton(String level) {
-    bool isSelected = _selectedLevel == level;
+  Widget _buildActionButton(String action) {
+    bool isSelected = _selectedAction == action;
 
     return ElevatedButton(
-      onPressed: () => _selectLevel(level),
+      onPressed: () => _selectAction(action),
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.blue : Colors.grey,
         foregroundColor: Colors.white,
@@ -312,28 +393,64 @@ class _CombinedSelectorState extends State<CombinedSelector> {
         padding: const EdgeInsets.all(18),
       ),
       child: Text(
-        level,
+        action,
         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
   }
 
   Widget _buildAlgaeButton(String algae) {
-    bool isSelected = _selectedLevel == algae;
+    bool isSelected = _selectedAction == algae;
 
     return ElevatedButton(
-      onPressed: () => _selectLevel(algae),
+      onPressed: () => _selectAction(algae),
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.green : Colors.grey.shade600,
         foregroundColor: Colors.white,
         shape: const CircleBorder(),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
       ),
       child: Text(
         algae.split(
           ' ',
         )[1][0], // Just show first letter of second word (L or H)
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildProcessorButton() {
+    bool isSelected = _selectedAction == 'Processor';
+
+    return ElevatedButton(
+      onPressed: () => _selectAction('Processor'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? Colors.orange : Colors.grey.shade700,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(12),
+      ),
+      child: const Text(
+        'P',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildBargeButton() {
+    bool isSelected = _selectedAction == 'Barge';
+
+    return ElevatedButton(
+      onPressed: () => _selectAction('Barge'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? Colors.purple : Colors.grey.shade700,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      ),
+      child: const Text(
+        'B',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
