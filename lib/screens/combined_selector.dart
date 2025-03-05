@@ -41,7 +41,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
   static late NT4Topic sideTopic;
   static late NT4Topic positionTopic;
 
-  void init() {
+  _CombinedSelectorState() {
     _client = NT4Client(
       serverBaseAddress: _robotAddress,
       onConnect: () {
@@ -56,12 +56,22 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       },
     );
 
-    actionTopic = _client.publishNewTopic('/Dashboard/Action', NT4TypeStr.STR);
-    sideTopic = _client.publishNewTopic('/Dashboard/Side', NT4TypeStr.STR);
-    positionTopic = _client.publishNewTopic(
-      '/Dashboard/Position',
+    actionTopic = _client.publishNewTopic(
+      '/SmartDashboard/ConsoleDriverAction',
       NT4TypeStr.STR,
     );
+    sideTopic = _client.publishNewTopic(
+      '/SmartDashboard/ConsoleCoralSide',
+      NT4TypeStr.STR,
+    );
+    positionTopic = _client.publishNewTopic(
+      '/SmartDashboard/ConsoleCoralPosition',
+      NT4TypeStr.STR,
+    );
+
+    _client.addSample(actionTopic, "L1");
+    _client.addSample(sideTopic, "Left");
+    _client.addSample(positionTopic, "A");
   }
 
   void _selectFace(String face) {
@@ -93,7 +103,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       }
 
       // Log the change
-      // _logSelectionChange('Action', action);
+      _logSelectionChange('Action', action);
       _client.addSample(actionTopic, action);
     }
   }
