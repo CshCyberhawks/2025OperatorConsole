@@ -30,7 +30,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
   // Selected side (Left or Right), starting with Left
   String _selectedSide = 'Left';
 
-  static const bool kDebugMode = true;
+  static const bool kDebugMode = false;
 
   static const String _robotAddress = kDebugMode ? '127.0.0.1' : '10.28.75.2';
 
