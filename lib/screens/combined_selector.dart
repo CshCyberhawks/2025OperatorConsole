@@ -1,3 +1,4 @@
+import 'package:dashboard_flutter/services/nt4.dart';
 import 'package:flutter/material.dart';
 import '../widgets/hexagon_painter.dart';
 import '../widgets/branch_painter.dart';
@@ -29,6 +30,40 @@ class _CombinedSelectorState extends State<CombinedSelector> {
   // Selected side (Left or Right), starting with Left
   String _selectedSide = 'Left';
 
+  static const bool kDebugMode = true;
+
+  static const String _robotAddress = kDebugMode ? '127.0.0.1' : '10.28.75.2';
+
+  static late NT4Client _client;
+  static bool _connected = false;
+
+  static late NT4Topic actionTopic;
+  static late NT4Topic sideTopic;
+  static late NT4Topic positionTopic;
+
+  void init() {
+    _client = NT4Client(
+      serverBaseAddress: _robotAddress,
+      onConnect: () {
+        _connected = true;
+        // if (_shouldSendOnConnect) {
+        //   Future.delayed(const Duration(milliseconds: 200), () => _sendAll());
+        // }
+      },
+      onDisconnect: () {
+        _connected = false;
+        // _shouldSendOnConnect = true;
+      },
+    );
+
+    actionTopic = _client.publishNewTopic('/Dashboard/Action', NT4TypeStr.STR);
+    sideTopic = _client.publishNewTopic('/Dashboard/Side', NT4TypeStr.STR);
+    positionTopic = _client.publishNewTopic(
+      '/Dashboard/Position',
+      NT4TypeStr.STR,
+    );
+  }
+
   void _selectFace(String face) {
     if (_selectedFace != face) {
       setState(() {
@@ -41,7 +76,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       }
 
       // Log the change
-      _logSelectionChange('Position', face);
+      // _logSelectionChange('Position', face);
+      _client.addSample(positionTopic, face);
     }
   }
 
@@ -57,7 +93,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       }
 
       // Log the change
-      _logSelectionChange('Action', action);
+      // _logSelectionChange('Action', action);
+      _client.addSample(actionTopic, action);
     }
   }
 
@@ -73,7 +110,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       }
 
       // Log the change
-      _logSelectionChange('Side', side);
+      // _logSelectionChange('Side', side);
+      _client.addSample(sideTopic, side);
     }
   }
 
