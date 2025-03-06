@@ -282,15 +282,18 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                                       // Calculate button size based on hexagon size
                                       final double buttonSize = hexSize * 0.15;
+                                      // Account for the 1.5x scaling in _buildFaceButton
+                                      final double actualButtonSize =
+                                          buttonSize * 1.5;
 
                                       return Positioned(
                                         left:
                                             buttonX -
-                                            buttonSize /
+                                            actualButtonSize /
                                                 2, // Center the button on the position
                                         top:
                                             buttonY -
-                                            buttonSize /
+                                            actualButtonSize /
                                                 2, // Center the button on the position
                                         child: _buildFaceButton(
                                           face,
@@ -616,8 +619,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     bool isSelected = _selectedFace == face;
 
     return SizedBox(
-      width: size,
-      height: size,
+      width: size * 1.5,
+      height: size * 1.5,
       child: ElevatedButton(
         onPressed: () => _selectFace(face),
         style: ElevatedButton.styleFrom(
