@@ -199,14 +199,15 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color:
-                          _selectedAction.contains('Algae')
-                              ? Colors.green.shade300
-                              : _selectedAction == 'Processor'
+                      color: _selectedAction.contains('Algae')
+                          ? Colors.green.shade300
+                          : _selectedAction == 'Processor'
                               ? Colors.orange.shade300
                               : _selectedAction == 'Barge'
-                              ? Colors.purple.shade300
-                              : Colors.blue.shade300,
+                                  ? Colors.purple.shade300
+                                  : _selectedAction == 'Feeder'
+                                      ? Colors.red.shade300
+                                      : Colors.blue.shade300,
                     ),
                   ),
                   Text(
@@ -269,13 +270,11 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                       final Offset position = entry.value;
 
                                       // Calculate button position based on hexagon size
-                                      final double buttonX =
-                                          hexCenterX +
+                                      final double buttonX = hexCenterX +
                                           (position.dx / buttonDistance) *
                                               (hexSize / 2) *
                                               0.7;
-                                      final double buttonY =
-                                          hexCenterY +
+                                      final double buttonY = hexCenterY +
                                           (position.dy / buttonDistance) *
                                               (hexSize / 2) *
                                               0.7;
@@ -287,12 +286,10 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                           buttonSize * 1.5;
 
                                       return Positioned(
-                                        left:
-                                            buttonX -
+                                        left: buttonX -
                                             actualButtonSize /
                                                 2, // Center the button on the position
-                                        top:
-                                            buttonY -
+                                        top: buttonY -
                                             actualButtonSize /
                                                 2, // Center the button on the position
                                         child: _buildFaceButton(
@@ -355,8 +352,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                 final double shelfHeight = height * 0.9 * 0.08;
                                 final double shelfEndX =
                                     shelfStartX + shelfWidth;
-                                final double shelfEndY =
-                                    shelfStartY +
+                                final double shelfEndY = shelfStartY +
                                     shelfHeight * 0.3; // Slight tilt downward
 
                                 return Stack(
@@ -366,30 +362,75 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                     CustomPaint(
                                       size: Size(width * 0.9, height * 0.9),
                                       painter: BranchPainter(
-                                        selectedLevel:
-                                            _selectedAction.startsWith('L')
-                                                ? _selectedAction
-                                                : 'L1', // Default to L1 for branch painter if algae is selected
-                                        isAlgaeSelected:
-                                            _selectedAction.contains('Algae') ||
+                                        selectedLevel: _selectedAction
+                                                .startsWith('L')
+                                            ? _selectedAction
+                                            : 'L1', // Default to L1 for branch painter if algae is selected
+                                        isAlgaeSelected: _selectedAction
+                                                .contains('Algae') ||
                                             _selectedAction == 'Processor' ||
-                                            _selectedAction == 'Barge',
+                                            _selectedAction == 'Barge' ||
+                                            _selectedAction == 'Feeder',
                                       ),
                                     ),
 
-                                    // Processor visualization (rectangle with inner rectangle)
+                                    // Barge visualization (trough with button) - TOP
                                     Positioned(
-                                      left: width * 0.05,
-                                      bottom:
-                                          height * 0.08, // Position from bottom
+                                      left: width * 0.05, // Left aligned
+                                      top: height * 0.08, // Upper position
                                       child: Container(
                                         width: width * 0.35,
-                                        height: height * 0.35,
+                                        height: height * 0.25,
                                         decoration: BoxDecoration(
-                                          color:
-                                              _selectedAction == 'Processor'
-                                                  ? Colors.orange.shade200
-                                                  : Colors.grey.shade400,
+                                          color: _selectedAction == 'Barge'
+                                              ? Colors.purple.shade200
+                                              : Colors.grey.shade400,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Container(
+                                            width: width * 0.3,
+                                            height: height * 0.18,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade600,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                bottomLeft: Radius.circular(
+                                                  30,
+                                                ),
+                                                bottomRight:
+                                                    Radius.circular(30),
+                                              ),
+                                              border: Border.all(
+                                                color: Colors.black,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: _buildBargeButton(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Processor visualization (rectangle with inner rectangle) - MIDDLE
+                                    Positioned(
+                                      left: width * 0.05, // Left aligned
+                                      top: height * 0.38, // Middle position
+                                      child: Container(
+                                        width: width * 0.35,
+                                        height: height * 0.25,
+                                        decoration: BoxDecoration(
+                                          color: _selectedAction == 'Processor'
+                                              ? Colors.orange.shade200
+                                              : Colors.grey.shade400,
                                           borderRadius: BorderRadius.circular(
                                             12,
                                           ),
@@ -401,7 +442,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                         child: Center(
                                           child: Container(
                                             width: width * 0.25,
-                                            height: height * 0.25,
+                                            height: height * 0.18,
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade600,
                                               borderRadius:
@@ -419,18 +460,17 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                       ),
                                     ),
 
-                                    // Barge visualization (trough with button)
+                                    // Feeder Intake visualization - BOTTOM
                                     Positioned(
-                                      left: width * 0.05,
-                                      top: height * 0.08, // Upper position
+                                      left: width * 0.05, // Left aligned
+                                      top: height * 0.68, // Bottom position
                                       child: Container(
                                         width: width * 0.35,
-                                        height: height * 0.28,
+                                        height: height * 0.25,
                                         decoration: BoxDecoration(
-                                          color:
-                                              _selectedAction == 'Barge'
-                                                  ? Colors.purple.shade200
-                                                  : Colors.grey.shade400,
+                                          color: _selectedAction == 'Feeder'
+                                              ? Colors.red.shade200
+                                              : Colors.grey.shade400,
                                           borderRadius: BorderRadius.circular(
                                             12,
                                           ),
@@ -441,25 +481,19 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                         ),
                                         child: Center(
                                           child: Container(
-                                            width: width * 0.3,
-                                            height: height * 0.2,
+                                            width: width * 0.25,
+                                            height: height * 0.18,
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade600,
                                               borderRadius:
-                                                  const BorderRadius.only(
-                                                    bottomLeft: Radius.circular(
-                                                      30,
-                                                    ),
-                                                    bottomRight:
-                                                        Radius.circular(30),
-                                                  ),
+                                                  BorderRadius.circular(8),
                                               border: Border.all(
                                                 color: Colors.black,
                                                 width: 1,
                                               ),
                                             ),
                                             child: Center(
-                                              child: _buildBargeButton(),
+                                              child: _buildFeederButton(),
                                             ),
                                           ),
                                         ),
@@ -468,12 +502,10 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                                     // L1 button (on the shelf)
                                     Positioned(
-                                      left:
-                                          shelfEndX -
+                                      left: shelfEndX -
                                           width *
                                               0.12, // End of shelf minus half button width
-                                      top:
-                                          shelfEndY -
+                                      top: shelfEndY -
                                           height *
                                               0.03, // Adjust to center on shelf
                                       child: _buildActionButton(
@@ -484,14 +516,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                                     // L2 button (bottom branch)
                                     Positioned(
-                                      left:
-                                          mainPipeLeft +
+                                      left: mainPipeLeft +
                                           mainPipeWidth +
                                           branchWidth -
                                           width *
                                               0.12, // End of branch minus half button width
-                                      top:
-                                          branchPositions[0] +
+                                      top: branchPositions[0] +
                                           branchHeight / 2 -
                                           height * 0.06, // Center on branch
                                       child: _buildActionButton(
@@ -502,13 +532,11 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                                     // Algae Low (between L2 and L3)
                                     Positioned(
-                                      left:
-                                          mainPipeLeft +
+                                      left: mainPipeLeft +
                                           mainPipeWidth +
                                           branchWidth +
                                           10, // End of branch + fixed offset
-                                      top:
-                                          (branchPositions[0] +
+                                      top: (branchPositions[0] +
                                                   branchPositions[1]) /
                                               2 -
                                           height *
@@ -521,14 +549,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                                     // L3 button (middle branch)
                                     Positioned(
-                                      left:
-                                          mainPipeLeft +
+                                      left: mainPipeLeft +
                                           mainPipeWidth +
                                           branchWidth -
                                           width *
                                               0.12, // End of branch minus half button width
-                                      top:
-                                          branchPositions[1] +
+                                      top: branchPositions[1] +
                                           branchHeight / 2 -
                                           height * 0.06, // Center on branch
                                       child: _buildActionButton(
@@ -539,13 +565,11 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                                     // Algae High (between L3 and L4)
                                     Positioned(
-                                      left:
-                                          mainPipeLeft +
+                                      left: mainPipeLeft +
                                           mainPipeWidth +
                                           branchWidth +
                                           10, // End of branch + fixed offset
-                                      top:
-                                          (branchPositions[1] +
+                                      top: (branchPositions[1] +
                                                   branchPositions[2]) /
                                               2 -
                                           height *
@@ -558,14 +582,12 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                                     // L4 button (top branch)
                                     Positioned(
-                                      left:
-                                          mainPipeLeft +
+                                      left: mainPipeLeft +
                                           mainPipeWidth +
                                           branchWidth -
                                           width *
                                               0.12, // End of branch minus half button width
-                                      top:
-                                          branchPositions[2] +
+                                      top: branchPositions[2] +
                                           branchHeight / 2 -
                                           height * 0.06, // Center on branch
                                       child: _buildActionButton(
@@ -744,6 +766,40 @@ class _CombinedSelectorState extends State<CombinedSelector> {
         ),
         child: Text(
           'B',
+          style: TextStyle(
+            fontSize: buttonHeight * 0.6,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeederButton() {
+    bool isSelected = _selectedAction == 'Feeder';
+
+    // Get the context size
+    final Size screenSize = MediaQuery.of(context).size;
+    final double buttonWidth = screenSize.width * 0.06;
+    final double buttonHeight = screenSize.width * 0.04;
+
+    return SizedBox(
+      width: buttonWidth,
+      height: buttonHeight,
+      child: ElevatedButton(
+        onPressed: () => _selectAction('Feeder'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              isSelected ? Colors.red.shade700 : Colors.grey.shade800,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonHeight * 0.3),
+          ),
+          padding: EdgeInsets.zero,
+          elevation: isSelected ? 8 : 4,
+        ),
+        child: Text(
+          'F',
           style: TextStyle(
             fontSize: buttonHeight * 0.6,
             fontWeight: FontWeight.bold,
