@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/combined_selector.dart';
+import 'services/update_checker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,7 +31,32 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const CombinedSelector(title: '2875 Operator Console'),
+      home: const HomeScreen(title: '2875 Operator Console'),
     );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Check for updates after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateChecker.checkForUpdates(context);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CombinedSelector(title: widget.title);
   }
 }
