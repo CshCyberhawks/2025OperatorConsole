@@ -140,25 +140,25 @@ class _CombinedSelectorState extends State<CombinedSelector> {
     // Calculate positions for each face button
     // For a regular hexagon with flat sides at top and bottom
     final Map<String, Offset> buttonPositions = {
-      // Calculate the center point of each face
+      // Calculate the center point of each face in clockwise order
       'A': Offset(0, buttonDistance), // Bottom (0 degrees)
-      'B': Offset(
-        buttonDistance * 0.866,
-        buttonDistance * 0.5,
-      ), // Bottom-right (30 degrees)
-      'C': Offset(
-        buttonDistance * 0.866,
-        -buttonDistance * 0.5,
-      ), // Top-right (150 degrees)
-      'D': Offset(0, -buttonDistance), // Top (180 degrees)
-      'E': Offset(
-        -buttonDistance * 0.866,
-        -buttonDistance * 0.5,
-      ), // Top-left (210 degrees)
       'F': Offset(
+        buttonDistance * 0.866,
+        buttonDistance * 0.5,
+      ), // Bottom-right (30 degrees) - was B
+      'E': Offset(
+        buttonDistance * 0.866,
+        -buttonDistance * 0.5,
+      ), // Top-right (150 degrees) - was C
+      'D': Offset(0, -buttonDistance), // Top (180 degrees) - unchanged
+      'C': Offset(
+        -buttonDistance * 0.866,
+        -buttonDistance * 0.5,
+      ), // Top-left (210 degrees) - was E
+      'B': Offset(
         -buttonDistance * 0.866,
         buttonDistance * 0.5,
-      ), // Bottom-left (330 degrees)
+      ), // Bottom-left (330 degrees) - was F
     };
 
     // Get the screen size to calculate button sizes

@@ -8,21 +8,18 @@ class HexagonPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint =
-        Paint()
-          ..color = Colors.grey.shade800
-          ..style = PaintingStyle.fill;
+    final Paint paint = Paint()
+      ..color = Colors.grey.shade800
+      ..style = PaintingStyle.fill;
 
-    final Paint borderPaint =
-        Paint()
-          ..color = Colors.grey.shade600
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.0;
+    final Paint borderPaint = Paint()
+      ..color = Colors.grey.shade600
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
 
-    final Paint selectedPaint =
-        Paint()
-          ..color = Colors.blue.shade700
-          ..style = PaintingStyle.fill;
+    final Paint selectedPaint = Paint()
+      ..color = Colors.blue.shade700
+      ..style = PaintingStyle.fill;
 
     final double width = size.width;
     final double height = size.height;
@@ -58,11 +55,11 @@ class HexagonPainter extends CustomPainter {
     // The face positions need to match the visual layout in reef_position_visualizer.dart
     final Map<String, List<int>> facePositions = {
       'A': [1, 2], // Bottom face (between vertices 3 and 4)
-      'B': [0, 1], // Bottom-right face
-      'C': [5, 0], // Top-right face
+      'B': [2, 3], // Bottom-right face
+      'C': [3, 4], // Top-right face
       'D': [4, 5], // Top face
-      'E': [3, 4], // Top-left face
-      'F': [2, 3], // Bottom-left face
+      'E': [5, 0], // Top-left face
+      'F': [0, 1], // Bottom-left face
     };
 
     if (facePositions.containsKey(selectedFace)) {
