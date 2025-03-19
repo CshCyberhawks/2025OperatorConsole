@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UpdateChecker {
   // Current app version - update this when releasing a new version
-  static const String currentVersion = '0.1.2';
+  static const String currentVersion = '0.1.3';
 
   // GitHub repository information
   static const String owner = 'CshCyberhawks';

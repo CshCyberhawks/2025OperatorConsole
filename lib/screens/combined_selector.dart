@@ -207,7 +207,9 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                   ? Colors.purple.shade300
                                   : _selectedAction == 'Feeder'
                                       ? Colors.red.shade300
-                                      : Colors.blue.shade300,
+                                      : _selectedAction == 'Cage'
+                                          ? Colors.amber.shade300
+                                          : Colors.blue.shade300,
                     ),
                   ),
                   Text(
@@ -370,17 +372,58 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                                 .contains('Algae') ||
                                             _selectedAction == 'Processor' ||
                                             _selectedAction == 'Barge' ||
-                                            _selectedAction == 'Feeder',
+                                            _selectedAction == 'Feeder' ||
+                                            _selectedAction == 'Cage',
+                                      ),
+                                    ),
+
+                                    // Cage visualization - ABOVE BARGE\
+                                    Positioned(
+                                      left: width * 0.05, // Left aligned
+                                      top: height * 0.05, // Moved down slightly
+                                      child: Container(
+                                        width: width * 0.3, // Shrunk width
+                                        height: height * 0.2, // Shrunk height
+                                        decoration: BoxDecoration(
+                                          color: _selectedAction == 'Cage'
+                                              ? Colors.amber.shade200
+                                              : Colors.grey.shade400,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Container(
+                                            width: width * 0.2,
+                                            height: height * 0.15,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade600,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: Colors.black,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: _buildCageButton(),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
 
                                     // Barge visualization (trough with button) - TOP
                                     Positioned(
                                       left: width * 0.05, // Left aligned
-                                      top: height * 0.08, // Upper position
+                                      top: height * 0.28, // Moved down slightly
                                       child: Container(
-                                        width: width * 0.35,
-                                        height: height * 0.25,
+                                        width: width * 0.3, // Shrunk width
+                                        height: height * 0.2, // Shrunk height
                                         decoration: BoxDecoration(
                                           color: _selectedAction == 'Barge'
                                               ? Colors.purple.shade200
@@ -395,8 +438,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                         ),
                                         child: Center(
                                           child: Container(
-                                            width: width * 0.3,
-                                            height: height * 0.18,
+                                            width: width * 0.25,
+                                            height: height * 0.15,
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade600,
                                               borderRadius:
@@ -423,10 +466,10 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                     // Processor visualization (rectangle with inner rectangle) - MIDDLE
                                     Positioned(
                                       left: width * 0.05, // Left aligned
-                                      top: height * 0.38, // Middle position
+                                      top: height * 0.52, // Moved down slightly
                                       child: Container(
-                                        width: width * 0.35,
-                                        height: height * 0.25,
+                                        width: width * 0.3, // Shrunk width
+                                        height: height * 0.2, // Shrunk height
                                         decoration: BoxDecoration(
                                           color: _selectedAction == 'Processor'
                                               ? Colors.orange.shade200
@@ -441,8 +484,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                         ),
                                         child: Center(
                                           child: Container(
-                                            width: width * 0.25,
-                                            height: height * 0.18,
+                                            width: width * 0.2,
+                                            height: height * 0.15,
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade600,
                                               borderRadius:
@@ -463,10 +506,10 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                     // Feeder Intake visualization - BOTTOM
                                     Positioned(
                                       left: width * 0.05, // Left aligned
-                                      top: height * 0.68, // Bottom position
+                                      top: height * 0.75, // Moved down slightly
                                       child: Container(
-                                        width: width * 0.35,
-                                        height: height * 0.25,
+                                        width: width * 0.3, // Shrunk width
+                                        height: height * 0.2, // Shrunk height
                                         decoration: BoxDecoration(
                                           color: _selectedAction == 'Feeder'
                                               ? Colors.red.shade200
@@ -481,8 +524,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                         ),
                                         child: Center(
                                           child: Container(
-                                            width: width * 0.25,
-                                            height: height * 0.18,
+                                            width: width * 0.2,
+                                            height: height * 0.15,
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade600,
                                               borderRadius:
@@ -800,6 +843,40 @@ class _CombinedSelectorState extends State<CombinedSelector> {
         ),
         child: Text(
           'F',
+          style: TextStyle(
+            fontSize: buttonHeight * 0.6,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCageButton() {
+    bool isSelected = _selectedAction == 'Cage';
+
+    // Get the context size
+    final Size screenSize = MediaQuery.of(context).size;
+    final double buttonWidth = screenSize.width * 0.06;
+    final double buttonHeight = screenSize.width * 0.04;
+
+    return SizedBox(
+      width: buttonWidth,
+      height: buttonHeight,
+      child: ElevatedButton(
+        onPressed: () => _selectAction('Cage'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              isSelected ? Colors.amber.shade700 : Colors.grey.shade800,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonHeight * 0.3),
+          ),
+          padding: EdgeInsets.zero,
+          elevation: isSelected ? 8 : 4,
+        ),
+        child: Text(
+          'C',
           style: TextStyle(
             fontSize: buttonHeight * 0.6,
             fontWeight: FontWeight.bold,
