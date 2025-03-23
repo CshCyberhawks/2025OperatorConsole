@@ -29,6 +29,8 @@ class _CombinedSelectorState extends State<CombinedSelector> {
   String _selectedAction = 'L1';
   // Selected side (Left or Right), starting with Left
   String _selectedSide = 'Left';
+  // High stow position toggle
+  bool _highStowPosition = false;
 
   static const bool kDebugMode = false;
 
@@ -40,6 +42,7 @@ class _CombinedSelectorState extends State<CombinedSelector> {
   static late NT4Topic actionTopic;
   static late NT4Topic sideTopic;
   static late NT4Topic positionTopic;
+  static late NT4Topic highStowTopic;
 
   _CombinedSelectorState() {
     _client = NT4Client(
@@ -68,10 +71,15 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       '/SmartDashboard/ConsoleCoralPosition',
       NT4TypeStr.STR,
     );
+    highStowTopic = _client.publishNewTopic(
+      '/SmartDashboard/ConsoleHighStowPosition',
+      NT4TypeStr.BOOL,
+    );
 
     _client.addSample(actionTopic, "L1");
     _client.addSample(sideTopic, "Left");
     _client.addSample(positionTopic, "A");
+    _client.addSample(highStowTopic, false);
   }
 
   void _selectFace(String face) {
@@ -123,6 +131,17 @@ class _CombinedSelectorState extends State<CombinedSelector> {
       // _logSelectionChange('Side', side);
       _client.addSample(sideTopic, side);
     }
+  }
+
+  // Handle high stow position toggle
+  void _toggleHighStowPosition(bool value) {
+    setState(() {
+      _highStowPosition = value;
+    });
+
+    // Log the change
+    _logSelectionChange('High Stow Position', value.toString());
+    _client.addSample(highStowTopic, value);
   }
 
   // Helper method to log selection changes
@@ -219,6 +238,28 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'High Stow: ',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        _highStowPosition ? 'ON' : 'OFF',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: _highStowPosition
+                              ? Colors.green.shade300
+                              : Colors.red.shade300,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -664,6 +705,45 @@ class _CombinedSelectorState extends State<CombinedSelector> {
                                 _buildSideButton('Left', width * 0.25),
                                 const SizedBox(width: 20),
                                 _buildSideButton('Right', width * 0.25),
+                              ],
+                            );
+                          },
+                        ),
+
+                        // High Stow Position Toggle
+                        const SizedBox(height: 20),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final double width = constraints.maxWidth;
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: width *
+                                      0.55, // Match width of side buttons plus spacing
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    onPressed: () => _toggleHighStowPosition(
+                                        !_highStowPosition),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: _highStowPosition
+                                          ? Colors.blue.shade600
+                                          : Colors.grey.shade800,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      elevation: _highStowPosition ? 8 : 4,
+                                    ),
+                                    child: const Text(
+                                      'High Stow Position',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             );
                           },
