@@ -688,66 +688,70 @@ class _CombinedSelectorState extends State<CombinedSelector> {
 
                         // Side selector (Left/Right)
                         const SizedBox(height: 20),
-                        const Text(
-                          'Side',
-                          style: TextStyle(
-                            fontSize: 24, // Increased from 20
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final double width = constraints.maxWidth;
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildSideButton('Left', width * 0.25),
-                                const SizedBox(width: 20),
-                                _buildSideButton('Right', width * 0.25),
-                              ],
-                            );
-                          },
-                        ),
-
-                        // High Stow Position Toggle
-                        const SizedBox(height: 20),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final double width = constraints.maxWidth;
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: width *
-                                      0.55, // Match width of side buttons plus spacing
-                                  height: 50,
-                                  child: ElevatedButton(
-                                    onPressed: () => _toggleHighStowPosition(
-                                        !_highStowPosition),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: _highStowPosition
-                                          ? Colors.blue.shade600
-                                          : Colors.grey.shade800,
-                                      foregroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      elevation: _highStowPosition ? 8 : 4,
+                        Row(
+                          children: [
+                            // High Stow Position Toggle on the left
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                height: 75,
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: ElevatedButton(
+                                  onPressed: () => _toggleHighStowPosition(
+                                      !_highStowPosition),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _highStowPosition
+                                        ? Colors.blue.shade600
+                                        : Colors.grey.shade800,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: const Text(
-                                      'High Stow Position',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    elevation: _highStowPosition ? 8 : 4,
+                                  ),
+                                  child: const Text(
+                                    'High Stow',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                              ],
-                            );
-                          },
+                              ),
+                            ),
+                            
+                            // Side selector title and buttons
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                children: [
+                                  const Text(
+                                    'Side',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      final width = constraints.maxWidth;
+                                      return Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          _buildSideButton('Left', width * 0.4),
+                                          const SizedBox(width: 20),
+                                          _buildSideButton('Right', width * 0.4),
+                                        ],
+                                      );
+                                    }
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
